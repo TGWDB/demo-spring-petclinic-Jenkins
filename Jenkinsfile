@@ -7,29 +7,20 @@ pipeline {
 
   environment {
     DIFFBLUE_LICENSE_KEY = credentials('diffblue-license')
+    //DIFFBLUE_HEAD_BRANCH = $GIT_BRANCH
+    //DIFFBLUE_BASE_BRANCH = 'main'
+    //DIFFBLUE_REPOSITORY_URL = https://github.com/TGWDB/demo-spring-petclinic-Jenkins.git
   }
 
   stages {
     stage('Write tests') {
       steps {
         sh '''
-          dcover ci activate build create
-        '''
-      }
-    }
-    stage('Commit tests to branch') {
-      steps {
-        sh '''#!/bin/bash
-          git config user.name Diffblue
-          git config user.email diffblue@example.org
-
-          if [ -n "$(git status --short **/*DiffblueTest.java)" ]; then 
-            git add **/*DiffblueTest.java
-            git commit --message "Update Unit Tests for $(git rev-parse --short HEAD)"
-            git push --set-upstream origin
-          else
-            echo "Nothing to commit"
-          fi
+          git branch
+          git fetch --all
+          git checkout main
+          env
+          DIFFBLUE_HEAD_BRANCH=${GIT_BRANCH} dcover ci activate build create
         '''
       }
     }
