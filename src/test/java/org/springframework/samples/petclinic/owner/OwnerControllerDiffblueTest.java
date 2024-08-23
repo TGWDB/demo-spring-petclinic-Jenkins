@@ -291,6 +291,29 @@ class OwnerControllerDiffblueTest {
     when(ownerRepository.findByLastName(Mockito.<String>any(), Mockito.<Pageable>any()))
         .thenReturn(new PageImpl<>(new ArrayList<>()));
     MockHttpServletRequestBuilder getResult = MockMvcRequestBuilders.get("/owners");
+    MockHttpServletRequestBuilder requestBuilder = getResult.param("page", String.valueOf(-1));
+
+    // Act and Assert
+    MockMvcBuilders.standaloneSetup(ownerController)
+        .build()
+        .perform(requestBuilder)
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.model().size(1))
+        .andExpect(MockMvcResultMatchers.model().attributeExists("owner"))
+        .andExpect(MockMvcResultMatchers.view().name("owners/findOwners"))
+        .andExpect(MockMvcResultMatchers.forwardedUrl("owners/findOwners"));
+  }
+
+  /**
+   * Method under test:
+   * {@link OwnerController#processFindForm(int, Owner, BindingResult, Model)}
+   */
+  @Test
+  void testProcessFindForm5() throws Exception {
+    // Arrange
+    when(ownerRepository.findByLastName(Mockito.<String>any(), Mockito.<Pageable>any()))
+        .thenReturn(new PageImpl<>(new ArrayList<>()));
+    MockHttpServletRequestBuilder getResult = MockMvcRequestBuilders.get("/owners");
     MockHttpServletRequestBuilder requestBuilder = getResult.param("page", String.valueOf(1)).param("lastName", "Doe");
 
     // Act and Assert
